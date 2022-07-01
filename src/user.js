@@ -13,7 +13,7 @@ r.use(express.json());
 r.use("/dashboard", userDashboard);
 
 r.post("/register", (req, res) => {
-    let [name, hash] = [req.body["name"], req.body["hash"]];
+    const [name, hash] = [req.body["name"], req.body["hash"]];
     addUserAsync(name, hash).then(() => {
         res.status(200).send({
             success: true
@@ -27,7 +27,7 @@ r.post("/register", (req, res) => {
 });
 
 r.post("/login", (req, res) => {
-    let [name, hash] = [req.body["name"], req.body["hash"]];
+    const [name, hash] = [req.body["name"], req.body["hash"]];
     getUserByCredentialsAsync(name, hash).then((user) => {
         if (!user) {
             res.status(400).send({
@@ -37,7 +37,6 @@ r.post("/login", (req, res) => {
             return;
         }
         const sessionToken = jwt.sign({
-            id: user.id,
             name: user.name,
             hash: user.hash
         }, process.env["JWT_SECRET"], {

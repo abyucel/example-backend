@@ -2,22 +2,29 @@ import "dotenv/config";
 import express from "express";
 import { expressjwt as ejwt } from "express-jwt";
 
-import { getUserByCredentialsAsync } from "./database.js";
+import admin from "./admin.js";
+import {
+    getUserByCredentialsAsync,
+    setUserDetailsByNameAsync
+} from "./database.js";
 
 const r = express.Router();
 
-
 r.use(express.json());
 
-r.use(ejwt({ 
-    secret: process.env["JWT_SECRET"], 
+r.use(ejwt({
+    secret: process.env["JWT_SECRET"],
     algorithms: ["HS256"],
     isRevoked: (req, token) => {
-        let [name, hash] = [token.payload.name, token.payload.hash];
+        const [name, hash] = [token.payload.name, token.payload.hash];
         getUserByCredentialsAsync(name, hash, false).then((user) => {
-            req.user = user;
+            req.user = {
+                name: user.name,
+                hash: user.hash,
+                lvl: user.lvl
+            };
             return false;
-        }).catch((_) => {
+        }).catch(() => {
             return true;
         });
     }
@@ -34,29 +41,40 @@ r.use((err, _, res, next) => {
     next();
 });
 
+r.use("/admin", admin);
+
 r.get("/info", (req, res) => {
-    res.status(200).send({
-        success: true,
-        info: {
-            username: req.user.name
-        }
+    const [name, hash] = [req.user.name, req.user.hash];
+    getUserByCredentialsAsync(name, hash, false).then((user) => {
+        let data = {};
+        if (user.email) data.email = user.email;
+        if (user.firstName) data.firstName = user.firstName;
+        if (user.lastName) data.lastName = user.lastName;
+        res.status(200).send({
+            success: true,
+            info: data
+        });
+    }).catch((error) => {
+        res.status(400).send({
+            success: false,
+            error: error
+        });
     });
 });
 
 r.post("/info", (req, res) => {
-    res.status(400).send({
-        success: false
-    });
-});
-
-r.get("/note", (req, res) => {
-    res.sendStatus(500);
-});
-
-r.post("/note", (req, res) => {
-    res.status(400).send({
-        success: false
-    });
+    setUserDetailsByNameAsync(req.user.name,
+        req.body.email, req.body.firstName, req.body.lastName)
+        .then(() => {
+            res.status(200).send({
+                success: true
+            });
+        }).catch((error) => {
+            res.status(400).send({
+                success: false,
+                error: error
+            });
+        });
 });
 
 export default r;
