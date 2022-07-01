@@ -28,7 +28,7 @@ r.post("/register", (req, res) => {
 r.post("/login", (req, res) => {
     let [name, hash] = [req.body["name"], req.body["hash"]];
     getUserByCredentialsAsync(name, hash).then((user) => {
-        if (user === null) {
+        if (!user) {
             res.status(400).send({
                 success: false,
                 error: "user doesn't exist"

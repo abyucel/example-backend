@@ -1,9 +1,9 @@
 import Database from "better-sqlite3";
 import path from "path";
 
-import { sha256hash } from "./utils.js"
+import { sha256hash } from "./utils.js";
 
-const namePtn = /[a-z0-9_]{3,16}/
+const namePtn = /[a-z0-9_]{3,16}/;
 const hashPtn = /[a-fA-F0-9]{64}/;
 
 const db = new Database(path.join(process.cwd(), "main.db"));
@@ -35,7 +35,7 @@ export function setupDatabase() {
 export function getUserByCredentials(name, hash, rehash=true) {
     let user = db.prepare("SELECT * FROM users WHERE name = ? AND hash = ?;")
         .get(name, rehash ? sha256hash(hash) : hash);
-    return user === undefined ? null : user;
+    return user;
 }
 
 export function getUserByCredentialsAsync(name, hash, rehash=true) {
@@ -51,7 +51,7 @@ export function getUserByCredentialsAsync(name, hash, rehash=true) {
 
 export function getUserByName(name) {
     let user = db.prepare("SELECT * FROM users WHERE name = ?;").get(name);
-    return user === undefined ? null : user;
+    return user;
 }
 
 export function getUserByNameAsync(name) {

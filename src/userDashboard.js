@@ -58,14 +58,4 @@ r.post("/note", (req, res) => {
     });
 });
 
-/*
- * permission levels
- * - 0 => regular user
- * - 5 => admin
- * admin endpoints
- * - /admin => control everything via json messages
- *          .. requires permission level 5, return "missing perms" otherwise
- *          .. POST for all commands
- */
-
 export default r;
