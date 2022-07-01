@@ -12,13 +12,13 @@ const db = new Database(path.join(process.cwd(), "main.db"));
 export function setupDatabase() {
     db.exec(
         `
-        CREATE TABLE IF NOT EXISTS user (
+        CREATE TABLE IF NOT EXISTS users (
             id   INTEGER PRIMARY KEY AUTOINCREMENT,
             lvl  INTEGER NOT NULL,
             name VARCHAR(16) NOT NULL UNIQUE,
             hash VARCHAR(64) NOT NULL
         );
-        CREATE TABLE IF NOT EXISTS note (
+        CREATE TABLE IF NOT EXISTS notes (
             id                   INTEGER PRIMARY KEY AUTOINCREMENT,
             name                 TEXT NOT NULL,
             desc                 TEXT NOT NULL,
@@ -26,14 +26,14 @@ export function setupDatabase() {
             icon                 INTEGER NOT NULL,
             user_id              INTEGER NOT NULL,
             store_id             INTEGER NOT NULL,
-            FOREIGN KEY(user_id) REFERENCES user(id)
+            FOREIGN KEY(user_id) REFERENCES users(id)
         );
         `
     );
 }
 
 export function getUserByCredentials(name, hash, rehash=true) {
-    let user = db.prepare("SELECT * FROM user WHERE name = ? AND hash = ?;")
+    let user = db.prepare("SELECT * FROM users WHERE name = ? AND hash = ?;")
         .get(name, rehash ? sha256hash(hash) : hash);
     return user === undefined ? null : user;
 }
@@ -50,7 +50,7 @@ export function getUserByCredentialsAsync(name, hash, rehash=true) {
 }
 
 export function getUserByName(name) {
-    let user = db.prepare("SELECT * FROM user WHERE name = ?;").get(name);
+    let user = db.prepare("SELECT * FROM users WHERE name = ?;").get(name);
     return user === undefined ? null : user;
 }
 
@@ -65,19 +65,18 @@ export function getUserByNameAsync(name) {
     });
 }
 
-export function addUser(name, hash) {
+export function addUser(name, hash, rehash=true) {
     if (!namePtn.test(name) || !hashPtn.test(hash)) {
         throw new Error("name or hash rejected");
     }
-    const newHash = sha256hash(hash);
-    db.prepare("INSERT INTO user VALUES (NULL, 0, ?, ?);")
-        .run(name, newHash);
+    db.prepare("INSERT INTO users VALUES (NULL, 0, ?, ?);")
+        .run(name, rehash ? sha256hash(hash) : hash);
 }
 
-export function addUserAsync(name, hash) {
+export function addUserAsync(name, hash, rehash=true) {
     return new Promise((resolve, reject) => {
         try {
-            addUser(name, hash);
+            addUser(name, hash, rehash);
             resolve();
         } catch (error) {
             reject(error);

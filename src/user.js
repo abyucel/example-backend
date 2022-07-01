@@ -37,8 +37,8 @@ r.post("/login", (req, res) => {
         }
         const sessionToken = jwt.sign({
             id: user.id,
-            username: user.name,
-            password: user.hash
+            name: user.name,
+            hash: user.hash
         }, process.env["JWT_SECRET"], {
             algorithm: "HS256",
             expiresIn: "2h"

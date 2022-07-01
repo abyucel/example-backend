@@ -37,7 +37,7 @@ r.get("/info", (req, res) => {
     res.status(200).send({
         success: true,
         info: {
-            username: req.user.username
+            username: req.user.name
         }
     });
 });
@@ -48,12 +48,11 @@ r.post("/info", (req, res) => {
     });
 });
 
-r.get("/todo", (req, res) => {
+r.get("/note", (req, res) => {
     res.sendStatus(500);
 });
 
-r.post("/todo", (req, res) => {
-    console.log(req.body);
+r.post("/note", (req, res) => {
     res.status(400).send({
         success: false
     });
