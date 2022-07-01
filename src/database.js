@@ -16,10 +16,10 @@ db.exec(
         name VARCHAR(16) NOT NULL UNIQUE,
         hash VARCHAR(64) NOT NULL
     );
-    CREATE TABLE IF NOT EXISTS todo (
+    CREATE TABLE IF NOT EXISTS note (
         id                   INTEGER PRIMARY KEY AUTOINCREMENT,
         name                 TEXT NOT NULL,
-        desc                 BLOB NOT NULL,
+        desc                 TEXT NOT NULL,
         content              BLOB NOT NULL,
         icon                 INTEGER NOT NULL,
         user_id              INTEGER NOT NULL,
