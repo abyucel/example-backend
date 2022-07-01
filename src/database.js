@@ -10,24 +10,21 @@ const db = new Database(path.join(process.cwd(), "main.db"));
 
 db.exec(
     `
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS user (
         id   INTEGER PRIMARY KEY AUTOINCREMENT,
         lvl  INTEGER NOT NULL,
         name VARCHAR(16) NOT NULL UNIQUE,
         hash VARCHAR(64) NOT NULL
     );
-    CREATE TABLE IF NOT EXISTS store (
-        id       INTEGER PRIMARY KEY AUTOINCREMENT,
-        content  BLOB NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS uploads (
-        id                    INTEGER PRIMARY KEY AUTOINCREMENT,
-        name                  TEXT NOT NULL,
-        desc                  TEXT NOT NULL,
-        user_id               INTEGER NOT NULL,
-        store_id              INTEGER NOT NULL,
-        FOREIGN KEY(user_id)  REFERENCES users(id),
-        FOREIGN KEY(store_id) REFERENCES users(id)
+    CREATE TABLE IF NOT EXISTS todo (
+        id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+        name                 TEXT NOT NULL,
+        desc                 BLOB NOT NULL,
+        content              BLOB NOT NULL,
+        icon                 INTEGER NOT NULL,
+        user_id              INTEGER NOT NULL,
+        store_id             INTEGER NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES user(id)
     );
     `
 );
