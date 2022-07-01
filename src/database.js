@@ -8,29 +8,32 @@ const hashPtn = /[a-fA-F0-9]{64}/;
 
 const db = new Database(path.join(process.cwd(), "main.db"));
 
-db.exec(
-    `
-    CREATE TABLE IF NOT EXISTS user (
-        id   INTEGER PRIMARY KEY AUTOINCREMENT,
-        lvl  INTEGER NOT NULL,
-        name VARCHAR(16) NOT NULL UNIQUE,
-        hash VARCHAR(64) NOT NULL
+
+export function setupDatabase() {
+    db.exec(
+        `
+        CREATE TABLE IF NOT EXISTS user (
+            id   INTEGER PRIMARY KEY AUTOINCREMENT,
+            lvl  INTEGER NOT NULL,
+            name VARCHAR(16) NOT NULL UNIQUE,
+            hash VARCHAR(64) NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS note (
+            id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+            name                 TEXT NOT NULL,
+            desc                 TEXT NOT NULL,
+            content              BLOB NOT NULL,
+            icon                 INTEGER NOT NULL,
+            user_id              INTEGER NOT NULL,
+            store_id             INTEGER NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES user(id)
+        );
+        `
     );
-    CREATE TABLE IF NOT EXISTS note (
-        id                   INTEGER PRIMARY KEY AUTOINCREMENT,
-        name                 TEXT NOT NULL,
-        desc                 TEXT NOT NULL,
-        content              BLOB NOT NULL,
-        icon                 INTEGER NOT NULL,
-        user_id              INTEGER NOT NULL,
-        store_id             INTEGER NOT NULL,
-        FOREIGN KEY(user_id) REFERENCES user(id)
-    );
-    `
-);
+}
 
 export function getUserByCredentials(name, hash, rehash=true) {
-    let user = db.prepare("SELECT * FROM users WHERE name = ? AND hash = ?;")
+    let user = db.prepare("SELECT * FROM user WHERE name = ? AND hash = ?;")
         .get(name, rehash ? sha256hash(hash) : hash);
     return user === undefined ? null : user;
 }
@@ -47,7 +50,7 @@ export function getUserByCredentialsAsync(name, hash, rehash=true) {
 }
 
 export function getUserByName(name) {
-    let user = db.prepare("SELECT * FROM users WHERE name = ?;").get(name);
+    let user = db.prepare("SELECT * FROM user WHERE name = ?;").get(name);
     return user === undefined ? null : user;
 }
 
@@ -67,7 +70,7 @@ export function addUser(name, hash) {
         throw new Error("name or hash rejected");
     }
     const newHash = sha256hash(hash);
-    db.prepare("INSERT INTO users VALUES (NULL, 0, ?, ?);")
+    db.prepare("INSERT INTO user VALUES (NULL, 0, ?, ?);")
         .run(name, newHash);
 }
 
