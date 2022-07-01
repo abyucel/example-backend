@@ -6,6 +6,7 @@ import { setupDatabase } from "./database.js";
 const port = 3000;
 const app = express();
 
+
 app.use("/api/user", r);
 
 app.get("/api", (_, res) => {
