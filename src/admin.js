@@ -28,7 +28,6 @@ r.get("/", (req, res) => {
         });
         return;
     }
-    // TODO
     switch (req.body.command) {
         case "getUsers":
             getUsersAsync().then((users) => {
@@ -105,7 +104,6 @@ r.post("/", (req, res) => {
         });
         return;
     }
-    // TODO
     switch (req.body.command) {
         case "deleteUser":
             if (!req.body.name) {
