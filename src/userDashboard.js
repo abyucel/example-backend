@@ -46,13 +46,13 @@ r.use("/admin", admin);
 r.get("/info", (req, res) => {
     const [name, hash] = [req.user.name, req.user.hash];
     getUserByCredentialsAsync(name, hash, false).then((user) => {
-        let data = {};
-        if (user.email) data.email = user.email;
-        if (user.firstName) data.firstName = user.firstName;
-        if (user.lastName) data.lastName = user.lastName;
+        let v = {};
+        if (user.email) v.email = user.email;
+        if (user.firstName) v.firstName = user.firstName;
+        if (user.lastName) v.lastName = user.lastName;
         res.status(200).send({
             success: true,
-            info: data
+            user: v
         });
     }).catch((error) => {
         res.status(400).send({

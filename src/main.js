@@ -3,7 +3,7 @@ import express from "express";
 import r from "./user.js";
 import { setupDatabase } from "./database.js";
 
-const port = 3000;
+const port = 3001;
 const app = express();
 
 
