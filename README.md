@@ -13,5 +13,7 @@ npm start
 To add some test data, run
 
 ```sh
-python3 ./populate_db.py
+# inserts 5 users into main.db
+# starts from user0
+python3 ./populate_db.py 0 5
 ```
