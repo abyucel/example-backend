@@ -8,7 +8,7 @@ const port = 3001;
 const app = express();
 
 
-app.use(cors())
+app.use(cors());
 
 app.use("/api/user", r);
 
