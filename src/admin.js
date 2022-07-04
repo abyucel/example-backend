@@ -132,7 +132,7 @@ r.post("/", (req, res) => {
             });
             break;
         case "editUser":
-            if (!req.body.name || req.body.user) {
+            if (!req.body.name || !req.body.user) {
                 res.status(400).send({
                     success: false,
                     error: "missing parameter"
