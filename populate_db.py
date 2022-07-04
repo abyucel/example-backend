@@ -6,7 +6,7 @@ import sqlite3
 
 
 """
-populate_db.py - inserts test data to main.db
+populate_db.py - inserts test data into main.db
 
 usage:
     ./populate_db.py <start> <end>
@@ -16,8 +16,10 @@ usage:
         <end>   => integer, exclusive
 """
 
+
 def sha256(data):
     return hashlib.sha256(data.encode("utf-8")).hexdigest()
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
@@ -41,7 +43,8 @@ if __name__ == "__main__":
     with sqlite3.connect("main.db") as cn:
         c = cn.cursor()
         try:
-            c.executemany("INSERT INTO users VALUES (NULL, 0, ?, ?, ?, NULL, NULL)", rs)
+            c.executemany(
+                "INSERT INTO users VALUES (NULL, 0, ?, ?, ?, NULL, NULL)", rs)
             cn.commit()
         except Exception as e:
             print(f"insertion failed: {e}", file=sys.stderr)
